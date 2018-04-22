@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Title</title>
+    <style>
+        .selected {
+            color:red;
+        }
+    </style>
+</head>
+<body>
+
+<div id="hero-app">
+    <h1>Tour of Heroes</h1>
+
+    <h2>My Heroes</h2>
+
+    <ol id="hero-list">
+    </ol>
+
+    <div class="hero-editor">
+
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://underscorejs.org/underscore-min.js"></script>
+<script src="http://backbonejs.org/backbone-min.js"></script>
+
+<script type="text/template" id="hero-template">
+    <div class="hero-box">
+        <span class="hero-name">
+            <%- name %>
+        </span>
+        <input class="edit-input" style="display: none;" />
+        <button class="delete-btn">X</button>
+    </div>
+</script>
+
+<script type="text/template" id="edit-template">
+    <input class="edit-input" />
+</script>
+
+<script>
+$(function(){
+    var Hero = Backbone.Model.extend({
+        defaults: {
+            isClicked: false
+        },
+        select: function() {
+            this.set({isClicked: !this.get("isClicked")});
+        }
+    });
+
+    var HeroList = Backbone.Collection.extend({
+        model: Hero,
+        unselectOtherHero: function() {
+            console.log(this.where({isClicked: true}));
+        }
+    });
+
+    var Heroes = new HeroList;
+
+    var HeroView = Backbone.View.extend({
+        tagName: "li",
+        className: "hero-item",
+        heroTemplate: _.template($("#hero-template").html()),
+        events: {
+            "click button.delete-btn"   : "removeHero",
+            "click .hero-box"           : "selectHero"
+        },
+        initialize: function() {
+            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.model, 'destroy', this.remove);
+
+        },
+        render: function() {
+            this.$el.html(this.heroTemplate(this.model.toJSON()));
+            if (this.model.get('isClicked')) {
+                this.$el.addClass('selected');
+            } else {
+                this.$el.removeClass('selected');
+            }
+            this.inputTag = this.$('.edit-input');
+            return this;
+        },
+        removeHero: function() {
+            this.model.destroy();
+        },
+        selectHero: function() {
+            this.model.select();
+        }
+    });
+
+    var EditView = Backbone.View.extend({
+        tagName: "div",
+        editTemplate: _.template($("#edit-template").html()),
+        events: {
+            "keypress .edit-input": "updateHero"
+        },
+
+        updateHero: function(e) {
+            if(e.keyCode !== 13) return;
+            this.model.set({name: this.inputTag.val()});
+        }
+    });
+
+    var AppView = Backbone.View.extend({
+        el: $("#hero-app"),
+        events: {
+            "keypress #hero-input"  : "createOnEnter",
+            "click .hero-item"      : "editHero"
+        },
+        initialize: function() {
+
+            this.inputTag = this.$("#hero-input");
+
+            this.listenTo(Heroes, 'add', this.addOne);
+            this.listenTo(Heroes, 'all', this.render);
+
+            Heroes.add([{
+                name: "Super Man"
+            }, {
+                name: "Bat Man"
+            }, {
+                name: "Iron Man"
+            }]);
+        },
+        render: function() {
+            console.log(Heroes.toJSON());
+        },
+        addOne: function(hero) {
+            var heroView = new HeroView({model: hero});
+            this.$("#hero-list").append(heroView.render().el);
+        },
+        editHero: function() {
+            console.log("is clicked?");
+            Heroes.unselectOtherHero();
+        }
+    });
+
+    var App = new AppView;
+
+});
+
+
+
+</script>
+
+</body>
+</html>
