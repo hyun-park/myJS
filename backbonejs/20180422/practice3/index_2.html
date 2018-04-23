@@ -30,6 +30,7 @@
         <input class="toggle" type="checkbox" <%= completed ? 'checked' : '' %>>
         <label><%- title %></label>
         <input class="edit" value="<%- title %>">
+        <button class="destroy">remove</button>
     </div>
 </script>
 
@@ -57,11 +58,39 @@ $(function(){
     var TodoView = Backbone.View.extend({
         tagName: "li",
         template: _.template($("#item-template").html()),
+        initialize: function() {
+            this.listenTo(this.model, "change", this.render);
+            this.listenTo(this.model, "destroy", this.remove);
+        },
         events: {
-            "click .toggle": "clickCheckbox"
+            "click .toggle": "clickCheckbox",
+            "dblclick label": "activateEditMode",
+            "blur .edit": "closeEditMode",
+            "keypress .edit": "updateOnEnter",
+            "click .destroy": "deleteItem"
         },
         clickCheckbox: function() {
             this.model.changeState();
+        },
+        activateEditMode: function() {
+            this.$el.addClass("editing");
+        },
+        closeEditMode: function() {
+            var newTitle = this.$(".edit").val().trim();
+            if( newTitle !== "" ) {
+                this.model.set({title: newTitle});
+            } else {
+                this.model.destroy();
+            }
+            this.$el.removeClass("editing");
+        },
+        updateOnEnter: function(e) {
+            if( e.which !== 13) {return;}
+
+            this.closeEditMode();
+        },
+        deleteItem: function() {
+            this.model.destroy();
         },
         render: function() {
             this.$el.html(this.template(this.model.attributes));
