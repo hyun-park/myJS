@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+
+<section id="todoapp">
+    <header id="header">
+        <h1>Todos</h1>
+        <input id="new-todo" placeholder="What needs to be done?">
+    </header>
+    <section id="main">
+        <ul id="todo-list"></ul>
+    </section>
+</section>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://underscorejs.org/underscore-min.js"></script>
+<script src="http://backbonejs.org/backbone-min.js"></script>
+
+<script type="text/template" id="item-template">
+    <div class="view">
+        <input class="toggle" type="checkbox" <%= completed ? 'checked' : '' %>>
+        <label><%- title %></label>
+        <input class="edit" value="<%- title %>">
+        <button class="destroy">remove</button>
+    </div>
+</script>
+
+
+<script>
+// YOUR CODE GOES HERE!!!!
+
+$(function(){
+    var Todo = Backbone.Model.extend({
+        defaults: {
+            title: "",
+            completed: false
+        },
+        changeState: function() {
+            this.set({completed: !this.get("completed")});
+        }
+    });
+
+    var TodoList = Backbone.Collection.extend({
+        model: Todo
+    });
+
+    var todoList = new TodoList();
+
+    var TodoView = Backbone.View.extend({
+        tagName: "li",
+        template: _.template($("#item-template").html()),
+        initialize: function() {
+            this.listenTo(this.model, 'change', this.render);
+            this.listenTo(this.model, 'destroy', this.remove);
+        },
+        events: {
+            "click .toggle": "clickCheckbox",
+            "dblclick label": "activateEditMode",
+            "blur .edit": "closeEditMode",
+            "keypress .edit": "updateOnEnter",
+            "click .destroy": "deleteItem"
+        },
+        clickCheckbox: function() {
+            this.model.changeState();
+        },
+        activateEditMode: function(){
+            this.$el.addClass("editing");
+            this.$(".edit").focus();
+        },
+        closeEditMode: function() {
+            var newTitle = this.$(".edit").val().trim();
+            if (newTitle !== "") {
+                this.model.set({title: newTitle});
+            } else {
+                this.model.destroy();
+            }
+            this.$el.removeClass("editing");
+        },
+        updateOnEnter: function(e) {
+            if(e.which !== 13 || !this.$(".edit").val().trim()) { return; }
+            this.closeEditMode();
+        },
+        deleteItem: function() {
+            this.model.destroy();
+        },
+        render: function() {
+            this.$el.html(this.template(this.model.attributes));
+            return this;
+        }
+    });
+
+    var AppView = Backbone.View.extend({
+        el: "#todoapp",
+        initialize: function() {
+            this.input = this.$("#new-todo");
+            this.listenTo(todoList, 'add', this.addOne);
+        },
+        addOne: function(item) {
+            var itemView = new TodoView({model: item});
+            this.$("#todo-list").append(itemView.render().el);
+        },
+        events: {
+            "keypress #new-todo": "addOnEnter"
+        },
+        addOnEnter: function(e) {
+            if( e.which !== 13 || !this.input.val().trim()) { return; }
+
+            var newItem = {
+                title: this.input.val().trim()
+            }
+
+            todoList.add(newItem);
+            this.input.val('');
+        }
+    });
+
+    var appView = new AppView();
+});
+
+</script>
+
+</body>

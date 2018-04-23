@@ -31,9 +31,6 @@
 <!-- =============== -->
 <!-- Javascript code -->
 <!-- =============== -->
-<script type="text/html" id="AppView-template">
-    <h3>Hello <%= who %></h3>
-</script>
 <script type="text/template" id="item-template">
     <div class="view">
         <input class="toggle" type="checkbox">
@@ -112,42 +109,6 @@
     // Initializers
     //--------------
     app.appView = new app.AppView();
-
-
-    // var todoList = new app.TodoList()
-    // todoList.create({title: 'Learn Backbone\'s Collection'}); // notice: that `completed` will be set to false by default.
-    // var lmodel = new app.Todo({title: 'Learn Models', completed: true});
-    // todoList.add(lmodel);
-    // todoList.pluck('title');     // ["Learn Backbone's Collection", "Learn Models"]
-    // todoList.pluck('completed'); // [false, true]
-    // JSON.stringify(todoList);
-
-
-    // your JS code goes here
-    // var AppView = Backbone.View.extend({
-    //     el: '#container',
-    //     initialize: function(){
-    //         this.render();
-    //     },
-    //     render: function(){
-    //         this.$el.html("Hello World");
-    //     }
-    // });
-    //
-    // var AppView = Backbone.View.extend({
-    //     el: $('#container'),
-    //     // template which has the placeholder 'who' to be substitute later
-    //     template: _.template($("#AppView-template").html()),
-    //
-    //     initialize: function(){
-    //         this.render();
-    //     },
-    //     render: function(){
-    //         // render the function using substituting the varible 'who' for 'world!'.
-    //         this.$el.html(this.template({who: 'world!'}));
-    //         //***Try putting your name instead of world.
-    //     }
-    // });
 </script>
 
 </body>

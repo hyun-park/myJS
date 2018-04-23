@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<section id="todoapp">
+    <header id="header">
+        <h1>Todos</h1>
+        <input id="new-todo" placeholder="What needs to be done?">
+    </header>
+    <section id="main">
+        <ul id="todo-list"></ul>
+    </section>
+</section>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://underscorejs.org/underscore-min.js"></script>
+<script src="http://backbonejs.org/backbone-min.js"></script>
+
+<script type="text/template" id="item-template">
+    <div class="view">
+        <input class="toggle" type="checkbox">
+        <label><%- title %></label>
+    </div>
+</script>
+
+<script>
+// $(function(){
+    var Todo = Backbone.Model.extend({
+        defaults: {
+            title: "",
+            completed: false
+        },
+        changeState: function() {
+            this.set({completed: !this.get("completed")});
+        }
+    });
+
+    var TodoCollection = Backbone.Collection.extend({
+        model: Todo
+    });
+
+    var todoCollection = new TodoCollection();
+
+    var todoView = Backbone.View.extend({
+        tagName: "li",
+        template: _.template($("#item-template").html()),
+        events: {
+            "click .toggle": "changeItemState"
+        },
+        render: function() {
+            this.$el.html(this.template({title: this.model.get("title")}));
+            return this;
+        },
+        changeItemState: function() {
+            this.model.changeState();
+        }
+    });
+
+    var AppView = Backbone.View.extend({
+        el: "#todoapp",
+        initialize: function() {
+            this.newItemTitleInput = this.$('#new-todo');
+            this.listenTo(todoCollection, 'add', this.addItem);
+        },
+        addItem: function(item) {
+            var newItem = new todoView({model: item});
+            this.$("#todo-list").append(newItem.render().el);
+        },
+        events: {
+            "keypress #new-todo": "createTodoOnEnter"
+        },
+        createTodoOnEnter: function(e) {
+            if(e.which !== 13 || !this.newItemTitleInput.val().trim()) {return;}
+            var newItem = {
+                title: this.newItemTitleInput.val().trim()
+            }
+
+            todoCollection.add(newItem);
+            this.newItemTitleInput.val('');
+        }
+    });
+
+    var appView = new AppView();
+
+// });
+</script>
+
+</body>
+</html>
