@@ -45,10 +45,38 @@
     ```
 
 
-    2. `webpack.config.js` 설정 파일 만들기
+2. 자유롭게 모듈화 된 코드 작성하기
 
-        ```js
-        import hello from './hello';
-        import world from './world';
-        document.write(`${hello}, ${world}!`);
-        ```
+    > entry.js    
+    ```js
+    import hello from './hello';
+    import world from './world';
+    document.write(`${hello}, ${world}!`);
+    ```
+
+    > hello.js    
+    ```js
+    export default 'Hello';
+    ```
+
+    > world.js    
+    ```js
+    export default 'world';
+    ```
+
+
+3. 콘솔창에 `webpack` 입력 후 컴파일된 파 사용하기
+
+    > index.html
+    ```html
+    <html>
+      <head>
+        <meta charset="utf-8">
+      </head>
+      <body>
+
+        <!-- 모듈화 관계가 모두 bundle.js 하나의 파일로 컴파일 된다. -->
+        <script type="text/javascript" src="bundle.js"></script>
+      </body>
+    </html>
+    ```
