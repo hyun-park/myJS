@@ -2,7 +2,7 @@
 
 자바스크립트 공부 레포지토리
 
-Last Updated 05.21.0218
+Last Updated 05.22.0218
 
 ## `pass by value / pass by reference`
 
@@ -23,6 +23,10 @@ Last Updated 05.21.0218
 ## `new`
 
 [링크 바로 가기](https://github.com/hyun-park/myJS/tree/master/new)
+
+## `Global Object`
+
+[링크 바로 가기](https://github.com/hyun-park/myJS/tree/master/global_object)
 
 ## `promise`
 
