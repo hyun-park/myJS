@@ -20,9 +20,9 @@ Last Updated 05.21.0218
 
 [링크 바로 가기](https://github.com/hyun-park/myJS/tree/master/apply)
 
-## `webpack`
+## `new`
 
-[링크 바로 가기](https://github.com/hyun-park/myJS/tree/master/webpack)
+[링크 바로 가기](https://github.com/hyun-park/myJS/tree/master/new)
 
 ## `promise`
 
@@ -31,3 +31,7 @@ Last Updated 05.21.0218
 ## `async / await`
 
 [링크 바로 가기](https://github.com/hyun-park/myJS/tree/master/async_await)
+
+## `webpack`
+
+[링크 바로 가기](https://github.com/hyun-park/myJS/tree/master/webpack)
