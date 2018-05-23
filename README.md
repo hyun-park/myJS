@@ -28,6 +28,10 @@ Last Updated 05.22.0218
 
 [링크 바로 가기](https://github.com/hyun-park/myJS/tree/master/global_object)
 
+## `this`
+
+[링크 바로 가기](https://github.com/hyun-park/myJS/tree/master/this)
+
 ## `promise`
 
 [링크 바로 가기](https://github.com/hyun-park/myJS/tree/master/promise)
