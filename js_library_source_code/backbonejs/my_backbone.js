@@ -92,136 +92,24 @@
 
             options || (options = {});
 
-            // // Run validation.
-            // if (!this._validate(attrs, options)) return false;
-
             // Extract attributes and options.
             var unset = options.unset;
             var silent = options.silent;
-            var changes = [];
-            var changing = this._changing;
-            this._changing = true;
-
-            if (!changing) {
-                this._previousAttributes = _.clone(this.attributes);
-                this.changed = {};
-            }
 
             var current = this.attributes;
-            var changed = this.changed;
-            var prev = this._previousAttributes;
 
             // For each `set` attribute, update or delete the current value.
             for (var attr in attrs) {
                 val = attrs[attr];
-                if (!_.isEqual(current[attr], val)) changes.push(attr);
-                if (!_.isEqual(prev[attr], val)) {
-                    changed[attr] = val;
-                } else {
-                    delete changed[attr];
-                }
-                unset ? delete current[attr] : (current[attr] = val);
+                current[attr] = val;
             }
 
             // Update the `id`.
             if (this.idAttribute in attrs) this.id = this.get(this.idAttribute);
 
-            // Trigger all relevant attribute changes.
-            if (!silent) {
-                if (changes.length) this._pending = options;
-                for (var i = 0; i < changes.length; i++) {
-                    this.trigger(
-                        "change:" + changes[i],
-                        this,
-                        current[changes[i]],
-                        options
-                    );
-                }
-            }
-
-            // You might be wondering why there's a `while` loop here. Changes can
-            // be recursively nested within `"change"` events.
-            if (changing) return this;
-            if (!silent) {
-                while (this._pending) {
-                    options = this._pending;
-                    this._pending = false;
-                    this.trigger("change", this, options);
-                }
-            }
-            this._pending = false;
-            this._changing = false;
-            return this;
-        },
-
-        trigger: function(name) {
-            if (!this._events) return this;
-
-            var length = Math.max(0, arguments.length - 1);
-            var args = Array(length);
-            for (var i = 0; i < length; i++) args[i] = arguments[i + 1];
-
-            eventsApi(triggerApi, this._events, name, void 0, args);
             return this;
         }
     });
-
-    // Underscore methods that we want to implement on the Model, mapped to the
-    // number of arguments they take.
-    var modelMethods = {
-        keys: 1,
-        values: 1,
-        pairs: 1,
-        invert: 1,
-        pick: 0,
-        omit: 0,
-        chain: 1,
-        isEmpty: 1
-    };
-    var addMethod = function(length, method, attribute) {
-        switch (length) {
-            case 1:
-                return function() {
-                    return _[method](this[attribute]);
-                };
-            case 2:
-                return function(value) {
-                    return _[method](this[attribute], value);
-                };
-            case 3:
-                return function(iteratee, context) {
-                    return _[method](
-                        this[attribute],
-                        cb(iteratee, this),
-                        context
-                    );
-                };
-            case 4:
-                return function(iteratee, defaultVal, context) {
-                    return _[method](
-                        this[attribute],
-                        cb(iteratee, this),
-                        defaultVal,
-                        context
-                    );
-                };
-            default:
-                return function() {
-                    var args = slice.call(arguments);
-                    args.unshift(this[attribute]);
-                    return _[method].apply(_, args);
-                };
-        }
-    };
-    var addUnderscoreMethods = function(Class, methods, attribute) {
-        _.each(methods, function(length, method) {
-            if (_[method])
-                Class.prototype[method] = addMethod(length, method, attribute);
-        });
-    };
-
-    // Mix in each Underscore method as a proxy to `Model#attributes`.
-    addUnderscoreMethods(Model, modelMethods, "attributes");
 
     // Helper function to correctly set up the prototype chain for subclasses.
     // Similar to `goog.inherits`, but uses a hash of prototype properties and
