@@ -24,7 +24,8 @@
 
 	var posts = new Posts();
 
-	posts.add([post1, post2]);
+	posts.add(post1);
+	posts.add(post2);
 
 	var PostView = Backbone.View.extend({
 		el: '#posts-container',
@@ -71,11 +72,13 @@
 		//       to push content. Like the Hello World in this case.
 		render: function() {
 			this.$el.html(this.template());
-			for (let i = 0; i < this.collection.length; i += 1) {
+			for (let i = 0; i < this.collection.length; i++) {
 				const postView = new PostView({
 					model: this.collection.models[i]
 				});
-				this.$el.find("#posts-container").append(postView.render().$el);
+				pv = postView;
+				el = this.$el.find("#posts-container");
+				this.$el.find("#posts-container").append(postView.render().$el.html());
 			}
 
 			return this;
