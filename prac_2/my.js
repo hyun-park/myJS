@@ -71,14 +71,14 @@
 		// $el - it's a cached jQuery object (el), in which you can use jQuery functions
 		//       to push content. Like the Hello World in this case.
 		render: function() {
+			const self = this;
 			this.$el.html(this.template());
-			for (let i = 0; i < this.collection.length; i++) {
+			for (let i = 0; i < this.collection.length - 1; i++) {
 				const postView = new PostView({
 					model: this.collection.models[i]
 				});
-				pv = postView;
-				el = this.$el.find("#posts-container");
 				this.$el.find("#posts-container").append(postView.render().$el.html());
+				console.log(1);
 			}
 
 			return this;
