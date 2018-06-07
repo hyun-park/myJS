@@ -28,7 +28,6 @@
 	posts.add(post2);
 
 	var PostView = Backbone.View.extend({
-		el: '#posts-container',
 		template: _.template(
 			`
 				<h3><%- title %></h3>
@@ -40,14 +39,27 @@
 		),
 		tagName: 'div',
 		className: 'post',
-		initialize: function() {
-			this.render();
-		},
 		render: function() {
 			this.$el.html(this.template(this.model.attributes));
 			return this;
 		},
 
+	});
+
+	var PostsView = Backbone.View.extend({
+		tagName: 'div',
+		render: function() {
+			const self = this;
+
+			const posts = this.collection.models;
+			for (let i = 0; i < posts.length; i++) {
+				const postView = new PostView({
+					model: posts[i]
+				});
+				self.$el.append(postView.render().el);
+			}
+			return this;
+		}
 	});
 
 	var AppView = Backbone.View.extend({
@@ -73,19 +85,16 @@
 		render: function() {
 			const self = this;
 			this.$el.html(this.template());
-			for (let i = 0; i < this.collection.length - 1; i++) {
-				const postView = new PostView({
-					model: this.collection.models[i]
-				});
-				this.$el.find("#posts-container").append(postView.render().$el.html());
-				console.log(1);
-			}
+
+			const postsView = new PostsView({
+				collection: posts
+			});
+
+			this.$el.find("#posts-container").append(postsView.render().el);
 
 			return this;
 		}
 	});
 
-	var appView = new AppView({
-		collection: posts
-	});
+	var appView = new AppView();
 })();
