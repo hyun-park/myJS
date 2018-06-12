@@ -11,7 +11,6 @@
 		model: Post
 	});
 
-
 	var post1 = new Post({
 		title: "The fundamental of Backbone.",
 		content: "When I started learning BackboneJS..."
@@ -22,10 +21,7 @@
 		content: "When I started learning JS..."
 	});
 
-	var posts = new Posts();
-
-	posts.add(post1);
-	posts.add(post2);
+	var posts = new Posts([post1, post2]);
 
 	var PostView = Backbone.View.extend({
 		template: _.template(
@@ -43,7 +39,6 @@
 			this.$el.html(this.template(this.model.attributes));
 			return this;
 		},
-
 	});
 
 	var PostsView = Backbone.View.extend({
