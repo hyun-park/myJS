@@ -305,6 +305,7 @@
 	// Creating a Backbone.View creates its initial element outside of the DOM,
 	// if an existing element is not provided...
 	var View = (Backbone.View = function(options) {
+		console.log(options);
 		const newViewInstanceObject = this;
 		newViewInstanceObject.cid = _.uniqueId("stopListeningview");
 		_.extend(this, options);
@@ -427,9 +428,8 @@
 	var Collection = Backbone.Collection = function(models, options) {
 		options || (options = {});
 		if (options.model) this.model = options.model;
-		if (options.comparator !== void 0) this.comparator = options.comparator;
 		this._reset();
-		this.initialize.apply(this, arguments);
+		this.initialize();
 		if (models) this.reset(models, _.extend({
 			silent: true
 		}, options));
@@ -478,21 +478,21 @@
 		},
 
 		// Remove a model, or a list of models from the set.
-		remove: function(models, options) {
-			options = _.extend({}, options);
-			var singular = !_.isArray(models);
-			models = singular ? [models] : models.slice();
-			var removed = this._removeModels(models, options);
-			if (!options.silent && removed.length) {
-				options.changes = {
-					added: [],
-					merged: [],
-					removed: removed
-				};
-				this.trigger('update', this, options);
-			}
-			return singular ? removed[0] : removed;
-		},
+		// remove: function(models, options) {
+		// 	options = _.extend({}, options);
+		// 	var singular = !_.isArray(models);
+		// 	models = singular ? [models] : models.slice();
+		// 	var removed = this._removeModels(models, options);
+		// 	if (!options.silent && removed.length) {
+		// 		options.changes = {
+		// 			added: [],
+		// 			merged: [],
+		// 			removed: removed
+		// 		};
+		// 		this.trigger('update', this, options);
+		// 	}
+		// 	return singular ? removed[0] : removed;
+		// },
 
 		// Update a collection by `set`-ing a new list of models, adding new ones,
 		// removing models that are no longer present, and merging models that
@@ -531,6 +531,7 @@
 			// Turn bare objects into model references, and prevent invalid models
 			// from being added.
 			var model, i;
+
 			for (i = 0; i < models.length; i++) {
 				model = models[i];
 
@@ -955,7 +956,6 @@
 			protoProps
 		);
 		child.prototype.constructor = child;
-
 		return child;
 	};
 
