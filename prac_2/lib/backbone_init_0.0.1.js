@@ -124,6 +124,9 @@
 	Backbone.Model = function(attributes) {
 		this.attributes = {};
 		this.cid = _.uniqueId('c');
+		let attr = attributes;
+		if (this.defaults) attr = _.defaults(attr, this.defaults)
+
 		this.set(attributes || {}, {
 			silent: true
 		});
@@ -402,7 +405,7 @@
 			var collection = this;
 			var success = function(resp) {
 				collection.refresh(resp.models);
-				if (options.success) options.success(collection, resp);
+				if (options.success) options.success(resp);
 			};
 			Backbone.sync('read', this, success, options.error);
 			return this;
@@ -505,14 +508,14 @@
 	// if an existing element is not provided...
 	Backbone.View = function(options) {
 		this._configure(options || {});
-		if (this.options.el) {
-			this.el = this.options.el;
-		} else {
+		if (!this.el) {
 			var attrs = {};
 			if (this.id) attrs.id = this.id;
 			if (this.className) attrs.className = this.className;
 			this.el = this.make(this.tagName, attrs);
 		}
+
+
 		if (this.initialize) this.initialize(options);
 	};
 
@@ -594,6 +597,7 @@
 			if (this.options) options = _.extend({}, this.options, options);
 			if (options.model) this.model = options.model;
 			if (options.collection) this.collection = options.collection;
+			if (options.el) this.el = options.el;
 			if (options.id) this.id = options.id;
 			if (options.className) this.className = options.className;
 			if (options.tagName) this.tagName = options.tagName;
@@ -603,7 +607,7 @@
 	});
 
 	// Set up inheritance for the model, collection, and view.
-	var extend = Backbone.Model.extend = Backbone.Collection.extend = Backbone.View.extend = function(protoProps, classProps) {
+	var extend = Backbone.Model.extend = Backbone.Collection.extend = Backbone.View.extend = function(protoProps = {}, classProps) {
 		var child = inherits(this, protoProps, classProps);
 		child.extend = extend;
 		return child;
@@ -626,6 +630,7 @@
 	// * Send up the models as XML instead of JSON.
 	// * Persist models via WebSockets instead of Ajax.
 	//
+
 	Backbone.sync = function(method, model, success, error) {
 		$.ajax({
 			url: getUrl(model),
