@@ -63,6 +63,7 @@
         // Bind an event, specified by a string name, `ev`, to a `callback` function.
         // Passing `"all"` will bind the callback to all events fired.
         bind: function(ev, callback) {
+            console.log("bined");
             var calls = this._callbacks || (this._callbacks = {});
             var list = this._callbacks[ev] || (this._callbacks[ev] = []);
             list.push(callback);
@@ -73,6 +74,7 @@
         // callbacks for the event. If `ev` is null, removes all bound callbacks
         // for all events.
         unbind: function(ev, callback) {
+            console.log("unbined");
             var calls;
             if (!ev) {
                 this._callbacks = {};
@@ -97,6 +99,7 @@
         // same arguments as `trigger` is, apart from the event name.
         // Listening for `"all"` passes the true event name as the first argument.
         trigger: function(ev) {
+            console.log(ev);
             var list, calls, i, l;
             var calls = this._callbacks;
             if (!(calls = this._callbacks)) return this;

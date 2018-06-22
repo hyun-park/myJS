@@ -1,5 +1,5 @@
 (function() {
-    var Post = Backbone.Model.extend();
+    var Post = Backbone.Model.extend({});
 
     var Posts = Backbone.Collection.extend({
         model: Post,
@@ -20,6 +20,7 @@
         tagName: "div",
         className: "post",
         render: function() {
+            console.log(this.model);
             $(this.el).html(this.template(this.model.attributes));
             return this;
         }
@@ -78,35 +79,43 @@
 			`
         ),
         initialize: function() {
-            this.render();
-        },
-        // $el - it's a cached jQuery object (el), in which you can use jQuery functions
-        //       to push content. Like the Hello World in this case.
-        render: function() {
             const self = this;
-            $(this.el).html(this.template());
-
             posts.fetch({
                 success: function(resp) {
-                    const postsView = new PostsView({
-                        collection: new Backbone.Collection(resp)
-                    });
-
-                    $(self.el)
-                        .find("#posts-container")
-                        .append(postsView.render().el);
-
-                    self.handleEvents();
+                    self.postsCollection = posts;
+                    self.render();
                 },
                 error: function(err) {
                     console.log(err);
                 }
             });
+        },
+        // $el - it's a cached jQuery object (el), in which you can use jQuery functions
+        //       to push content. Like the Hello World in this case.
+        render: function() {
+            $(this.el).html(this.template());
+
+            postsView = new PostsView({
+                collection: this.postsCollection
+            });
+
+            $(this.el)
+                .find("#posts-container")
+                .append(postsView.render().el);
 
             return this;
         },
         createPost: function() {
-            console.log("added!");
+            this.postsCollection.add(
+                new Post({
+                    title: $(this.el)
+                        .find("#title-input")
+                        .val(),
+                    body: $(this.el)
+                        .find("#content-input")
+                        .val()
+                })
+            );
         }
     });
 
