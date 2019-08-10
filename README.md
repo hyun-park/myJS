@@ -2,7 +2,7 @@
 
 자바스크립트 공부 레포지토리
 
-Last Updated 04.11.2019
+Last Updated 08.10.2019
 
 ## `pass by value / pass by reference`
 
